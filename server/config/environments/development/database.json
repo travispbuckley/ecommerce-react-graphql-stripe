@@ -1,0 +1,20 @@
+{
+  "defaultConnection": "default",
+  "connections": {
+    "default": {
+      "connector": "strapi-hook-mongoose",
+      "settings": {
+        "client": "mongo",
+        "host": "cluster0-nlgci.mongodb.net",
+        "port": 27017,
+        "database": "server",
+        "username": "TravisBuckley",
+        "password": "testpassword",
+        "srv": true
+      },
+      "options": {
+        "ssl": true
+      }
+    }
+  }
+}
