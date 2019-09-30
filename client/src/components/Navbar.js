@@ -13,7 +13,7 @@ const Navbar = () => (
     shape="roundedBottom"
   >
     <NavLink activeClassName="active" to="/signin">
-      <Text size="md" color="white">Sign In</Text>
+      <Text size="xl" color="white">Sign In</Text>
     </NavLink>
 
     <NavLink activeClassName="active" exact to="/">
@@ -33,7 +33,7 @@ const Navbar = () => (
     </NavLink>
 
     <NavLink activeClassName="active" to="/signup">
-      <Text size="md" color="white">Sign Up</Text>
+      <Text size="xl" color="white">Sign Up</Text>
     </NavLink>
   </Box>
 );
