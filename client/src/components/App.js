@@ -4,13 +4,16 @@ import { Container, Box, Heading, Card, Image, Text, SearchField, Icon } from 'g
 import './App.css';
 import Strapi from 'strapi-sdk-javascript/build/main';
 
+import Loader from './Loader';
+
 const apiUrl = process.env.API_URL || 'http://localhost:1337';
 const strapi = new Strapi(apiUrl);
 
 class App extends Component {
   state = {
     brands: [],
-    searchTerm: ''
+    searchTerm: '',
+    loadingBrands: true
   };
 
   async componentDidMount() {
@@ -31,10 +34,11 @@ class App extends Component {
         }
       });
       
-      this.setState({ brands: response.data.brands });
+      this.setState({ brands: response.data.brands, loadingBrands: false });
       console.log(response);
     } catch (err) {
       console.error(err);
+      this.setState({ loadingBrands: false });
     }
   }
 
@@ -50,7 +54,7 @@ class App extends Component {
   }
 
   render() {
-    const { searchTerm } = this.state;
+    const { searchTerm, loadingBrands } = this.state;
 
     return (
       <Container>
@@ -129,6 +133,7 @@ class App extends Component {
             </Box>
           ))}
         </Box>
+        <Loader show={loadingBrands} />
       </Container>
     );
   }
