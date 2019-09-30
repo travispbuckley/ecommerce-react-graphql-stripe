@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Box, Heading, Card, Image, Text } from 'gestalt';
+import { Container, Box, Heading, Card, Image, Text, SearchField, Icon } from 'gestalt';
 import './App.css';
 import Strapi from 'strapi-sdk-javascript/build/main';
+
+import Loader from './Loader';
 
 const apiUrl = process.env.API_URL || 'http://localhost:1337';
 const strapi = new Strapi(apiUrl);
 
 class App extends Component {
   state = {
-    brands: []
+    brands: [],
+    searchTerm: '',
+    loadingBrands: true
   };
 
   async componentDidMount() {
@@ -30,19 +34,53 @@ class App extends Component {
         }
       });
       
-      this.setState({ brands: response.data.brands });
+      this.setState({ brands: response.data.brands, loadingBrands: false });
       console.log(response);
     } catch (err) {
       console.error(err);
+      this.setState({ loadingBrands: false });
     }
   }
 
+  handleChange = ({ value }) => {
+    this.setState({ searchTerm: value });
+  }
+
+  filterBrands = ({ brands, searchTerm }) => {
+    return brands.filter(brand => {
+      return brand.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        brand.description.toLowerCase().includes(searchTerm.toLowerCase())
+    });
+  }
+
   render() {
-    const { brands } = this.state;
+    const { searchTerm, loadingBrands } = this.state;
 
     return (
       <Container>
-        {/* Brands */}
+        {/* Brands Search  */}
+        <Box
+          display="flex"
+          justifyContent="center"
+          marginTop={4}
+        >
+          <SearchField
+            id="SearchField"
+            accessibilityLabel="Brands Search Field"
+            onChange={this.handleChange}
+            placeholder="Search Brands"
+            value={searchTerm}
+          />
+          <Box margin={2}>
+            <Icon 
+              icon="filter"
+              color={searchTerm ? 'orange' : 'gray'}
+              size={20}
+              accessibilityLabel="Filter"
+            />
+          </Box>
+        </Box>
+        {/* Brands Section */}
         <Box
           display="flex"
           justifyContent="center"
@@ -54,15 +92,23 @@ class App extends Component {
         </Box>
         {/* Brands */}
         <Box
+          dangerouslySetInlineStyle={{
+            __style: {
+              backgroundColor: '#d6c8ec'
+            }
+          }}
+          shape="rounded"
+          wrap
           display="flex"
           justifyContent="around"
         >
-          {brands.map(brand => (
-            <Box margin={2} width={200} key={brand._id}>
+          {this.filterBrands(this.state).map(brand => (
+            <Box paddingY={4} margin={2} width={200} key={brand._id}>
               <Card
                 image={
                   <Box height={200} width={200}>
                     <Image
+                      fit="cover"
                       alt="Brand"
                       naturalHeight={1}
                       naturalWidth={1}
@@ -87,6 +133,7 @@ class App extends Component {
             </Box>
           ))}
         </Box>
+        <Loader show={loadingBrands} />
       </Container>
     );
   }
